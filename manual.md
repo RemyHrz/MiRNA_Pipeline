@@ -15,6 +15,10 @@ Bowtie 1.3.1 https://sourceforge.net/projects/bowtie-bio/files/bowtie/1.3.1
 Python (tested with 3.12.8)
     - pandas
 
+R 4.4.1 
+    - Deseq2 1.44.0
+    - EnhancedVolcano 1.22.0
+
 softwares must be accessible from path
 
 ### Filenames:
