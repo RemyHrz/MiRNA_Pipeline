@@ -20,19 +20,16 @@ for file in "$INPUT_DIR"/*.fastq*; do
     if [[ -f "$file" ]]; then
         filename=$(basename "$file")
         filename=$(echo "$filename" | cut -f 1 -d '.')
-		outname="${filename}.${QUALITY_THRESHOLD}.tr.${TRIM_FRONT}-${TRIM_TAIL}.sz.${MIN_SIZE}-${MAX_SIZE}"
+		outname="${filename}.${QUALITY_THRESHOLD}.test"
         OUTPUT_FILE="${OUTPUT_DIR}/${outname}.fastq"
         REPORT_HTML="${LOGS_DIR}/${outname}_fastp.html"
         REPORT_HTML2="${LOGS_DIR}/${outname}_fastp2.html"
         REPORT_JSON="/dev/null"
 
-        fastp -i "$file" --stdout \
+        fastp -i "$file" -o "$OUTPUT_FILE" \
               --average_qual $QUALITY_THRESHOLD \
               -a "$ADAPTER" -w "$THREADS" \
               --html "$REPORT_HTML" \
-              --json "$REPORT_JSON" | fastp --stdin -o "$OUTPUT_FILE" \
-              --trim_front1 4 --trim_tail1 4 -w "$THREADS" \
-              --html "$REPORT_HTML2" --json "$REPORT_JSON" \
-              -l "$MIN_SIZE" --length_limit "$MAX_SIZE"
+              --json "$REPORT_JSON"
     fi
 done

@@ -18,10 +18,11 @@ def read_fasta(fasta)-> dict:
                 fasta_dict[name] = line
     return fasta_dict
 
-def log_step(main_log,step:str):
+def log_step(main_log,step:str,echo=True):
     with open(main_log, "a") as file:
         file.write(f"\n{datetime.datetime.now().strftime('%d/%m/%y %H:%M:%S')} {step}\n")
-    print(f"{step}\n")
+    if echo:
+        print(f"{step}\n")
 
 def collapse_read(input_file,threshold:int):
     read_dict={}
@@ -36,6 +37,24 @@ def collapse_read(input_file,threshold:int):
             line=file.readline()
             line=file.readline()
             line=file.readline()
+    clean_dict={}
+    for seq,count in read_dict.items():
+            if count >= threshold:
+                clean_dict[seq]=count
+    return clean_dict
+
+def collapse_fasta(input_file,threshold:int):
+    read_dict={}
+    with open(input_file,"r") as file:
+        line=file.readline().strip()
+        while line:
+            if line.startswith(">"):
+                line=file.readline().strip()
+            if line not in read_dict:
+                read_dict[line] = 1
+            else:
+                read_dict[line] +=1
+            line=file.readline().strip()
     clean_dict={}
     for seq,count in read_dict.items():
             if count >= threshold:
@@ -66,6 +85,21 @@ def write_collapsed_tab(read_dict:dict,output_file,exp_name):
         for seq,count in read_dict.items():
                 file.write(f"{seq}\t{count}\tread{read_num}_x{count}\n")
                 read_num+=1
+
+def write_sequence_count_tab(read_dict:dict,output_file,exp_name):
+    with open(output_file,"w") as file:
+        read_num=1
+        file.write(f"Sequence\t{exp_name}\n")
+        for seq,count in read_dict.items():
+                file.write(f"{seq}\t{count}\n")
+                read_num+=1
+
+def write_fasta_from_sequences_and_ids(sequences:list,file):
+    result=""
+    with open(file,"w") as file:
+        for seq in sequences:
+            result+=f">{seq[1]}\n{seq[0]}\n"
+        file.write(result)
 
 def filter_table_with_ids(table,read_ids):
     df=pd.read_csv(table, sep="\t")
@@ -108,4 +142,37 @@ def write_tsv_from_dic(read_dict:dict,output_file):
 
 
 
+# """
+
+
+# #def extract_sequences_from_tab_file(file):
+#     sequences = pd.read_csv(file,sep="\t", usecols=[0]).squeeze("columns")
+#     return sequences
+
+# #def merge_sequences_per_experiment(experiment_sequences_list):
+#     combined = pd.concat(experiment_sequences_list, ignore_index=True)
+#     unique_sequences= combined.unique()
+#     return unique_sequences
+
+# #def extract_targets2(file,sequences):
+#     df=pd.read_csv(file,header=None,sep="\t",usecols=[0,1,8])
+#     df[1]=df[1].str.replace(r"\..*","",regex=True)
+#     df[8]=df[8].str.replace("U","T")
+#     df[8]=df[8].str.replace("-","")
+#     df[8]=df[8].str[::-1]
+#     filtered_targets = df[df[8].isin(sequences)].copy()
+#     filtered_targets.rename(columns={0: "miRNA", 1: "Target"},inplace=True)
+#     return filtered_targets[["miRNA","Target"]]
+
+# #def concat_sequences_list_per_key(dictionary:dict):
+#     results_dict={}
+#     for key in dictionary.keys():
+#         results_dict[key]=merge_sequences_per_experiment(dictionary[key])
+#     return results_dict
+
+# #def read_mirna_from_deseq_csv(file):
+#     df=pd.read_csv(file,usecols=["miRNA"]).squeeze("columns")
+#     return df
+
+# """
 
