@@ -78,7 +78,7 @@ main_log=f"{config["logs_dir"]}/logs"
 with open(main_log, "w") as file:
     file.write("Starting Analysis")
 
-"""
+
 # cleaning reads with fastp
 
 log_step(f"{config["logs_dir"]}/logs","Cleaning reads ...")
@@ -429,7 +429,7 @@ log_step(f"{config["logs_dir"]}/logs","Done")
 
 log_step(f"{config["logs_dir"]}/logs","Extracting target list ...")
 
-#"""
+
 
 targeted_genes_dic={}
 for file in glob.glob(f"{config["targeting_dir"]}/*.target"):
@@ -475,7 +475,7 @@ df = pd.DataFrame(dict([(k, pd.Series(v)) for k, v in targeted_genes_dic_process
 df = df.fillna("")
 
 df.to_csv(f"{config["results_dir"]}/targets.tsv",sep="\t", index=False)
-
+"""
 log_step(f"{config["logs_dir"]}/logs","Done")
 
 log_step(f"{config["logs_dir"]}/logs","Removing temp file from result directory")
